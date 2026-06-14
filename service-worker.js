@@ -1,5 +1,5 @@
 // Offline-Cache. Bei Aenderungen CACHE-Version erhoehen.
-const CACHE = "fz-v7";
+const CACHE = "fz-v8";
 const ASSETS = [
   "./",
   "./index.html",

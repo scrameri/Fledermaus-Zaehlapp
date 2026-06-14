@@ -172,6 +172,8 @@
           <option value="stille">Stille-Regel</option>
           <option value="rate">Raten-basiert</option>
           <option value="fit">Kurven-Fit</option>
+          <option value="poisson">Poisson (Log-Normal)</option>
+          <option value="tail">Schwanz-Rate</option>
         </select>
       </label>
 
@@ -192,6 +194,21 @@
         <label class="field">Stopp bei ausgeflogenem Anteil (%)
           <input id="set-fit" type="number" min="80" max="100" step="1" />
         </label>
+      </div>
+      <div id="grp-poisson" class="setgrp">
+        <label class="field">Stopp bei erwarteten Resttieren unter
+          <input id="set-poisson-rest" type="number" min="0.1" max="10" step="0.1" />
+        </label>
+        <p class="muted small">Ausflüge als Poisson-Prozess mit rechtsschiefer Log-Normal-Rate. Zeigt geschätzte Koloniegrösse und die Wahrscheinlichkeit, dass keiner mehr kommt. Realistischer Schwanz, daher längere Restzeit als der Kurven-Fit.</p>
+      </div>
+      <div id="grp-tail" class="setgrp">
+        <label class="field">Fensterbreite (Minuten)
+          <input id="set-tail-fenster" type="number" min="1" max="30" step="1" />
+        </label>
+        <label class="field">Stopp bei erwarteten Resttieren unter
+          <input id="set-tail-rest" type="number" min="0.1" max="10" step="0.1" />
+        </label>
+        <p class="muted small">Schätzt aus dem aktuellen Rückgang der Ausflugrate, wie viele Tiere noch zu erwarten sind. Robust, nimmt einen exponentiell abklingenden Schwanz an.</p>
       </div>
 
       <button id="btn-set-save" class="btn primary full">Speichern</button>

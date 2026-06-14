@@ -44,7 +44,7 @@ Alle Daten bleiben lokal auf dem Gerät.
   bleibt zur Nachvollziehbarkeit als ungültig im Export erhalten.
 - Sekundengenaue Protokollierung jedes Ereignisses als Grundlage für die
   statistische Modellierung des Ausflugverhaltens.
-- Live-Schätzung der Restbeobachtungszeit, drei umschaltbare Varianten.
+- Live-Schätzung der Restbeobachtungszeit, fünf umschaltbare Varianten.
 - Grafische Auswertung: kumulative Ausflugkurve und Ausflüge je Minute, schon
   während des Zählens und im Resultat.
 - Strukturierter Excel-Export.
@@ -68,15 +68,30 @@ Alle Daten bleiben lokal auf dem Gerät.
 
 Ziel ist zu erkennen, wie lange nach dem voraussichtlich letzten Ausflug noch
 zu beobachten ist, ohne welche zu verpassen und ohne unnötig lange zu warten.
-Umschaltbar unter Einstellungen:
+Fünf Varianten, umschaltbar unter Einstellungen (Standard: Poisson):
 
 - Stille-Regel: Stopp-Empfehlung, wenn seit dem letzten Ausflug eine einstellbare
-  Zahl Minuten ohne Ausflug vergangen ist.
-- Raten-basiert: Stopp, wenn die Ausflugrate unter einen Anteil der bisherigen
-  Spitzenrate fällt.
-- Kurven-Fit: passt eine logistische Sättigungskurve an und schätzt die Restzeit
-  bis zu einem eingestellten ausgeflogenen Anteil; nebenbei eine Schätzung der
-  Koloniegrösse.
+  Zahl Minuten ohne Ausflug vergangen ist. Einfach und robust, ignoriert aber den
+  Verlauf.
+- Raten-basiert: Stopp, wenn die Ausflugrate (gleitendes Fenster) unter einen
+  einstellbaren Anteil der bisherigen Spitzenrate fällt.
+- Kurven-Fit: passt eine logistische Sättigungskurve an die kumulative Ausflugkurve
+  an und schätzt die Restzeit bis zu einem eingestellten ausgeflogenen Anteil. Die
+  Kurve ist symmetrisch und unterschätzt deshalb den langen Schwanz der Nachzügler;
+  die Restzeit fällt tendenziell zu kurz aus.
+- Poisson (Log-Normal): modelliert die Ausflüge als inhomogenen Poisson-Prozess mit
+  rechtsschiefer Log-Normal-Rate. Die Koloniegrösse N ergibt sich geschlossen aus
+  der zensierten Maximum-Likelihood-Schätzung (N = n / F(jetzt)), nur die zwei
+  Formparameter werden angepasst. Die noch ausstehende Anzahl ist dann
+  poissonverteilt mit Mittel mu_rest = N · (1 − F(jetzt)); angezeigt werden
+  geschätzte Koloniegrösse, erwartete Resttiere und die Wahrscheinlichkeit, dass
+  keiner mehr kommt (e^(−mu_rest)). Gestoppt wird, wenn die erwarteten Resttiere
+  unter eine Schwelle fallen. Der realistische Schwanz liefert längere, ehrlichere
+  Restzeiten als der Kurven-Fit; Standardvariante.
+- Schwanz-Rate: modelliert nur den abklingenden Schwanz nach dem Peak als
+  exponentiellen Zerfall (Zeitkonstante aus dem Verhältnis zweier Fenster) und
+  rechnet die erwarteten Resttiere hoch. Robust und parameterarm, ohne globale
+  Kurvenanpassung; extrapoliert erst bei klar fallender Rate.
 
 Die eigentliche, belastbare Modellierung erfolgt bewusst separat (zum Beispiel in
 R) auf Basis des Ereignis-Exports. Die App liefert dafür die Rohdaten und im Feld
@@ -134,7 +149,7 @@ index.html              App-Gerüst (alle Ansichten)
 css/style.css           Themes (Dunkel, Nacht, Hell) und Layout
 js/data.js              Referenzlisten (Orte, Arten, Beobachter)
 js/storage.js           IndexedDB und Einstellungen
-js/estimate.js          Zählreihen und die drei Schätzvarianten
+js/estimate.js          Zählreihen und die fünf Schätzvarianten
 js/charts.js            SVG-Diagramme
 js/export.js            Excel-Export
 js/app.js               Ablaufsteuerung und Ansichten
