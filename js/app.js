@@ -136,6 +136,7 @@ function openCount(session) {
   qs("#count-art").textContent = current.art;
   show("view-count");
   updateCountUI();
+  renderLiveCharts();
   if (tickTimer) clearInterval(tickTimer);
   tickTimer = setInterval(updateCountUI, 1000);
 }
@@ -144,6 +145,7 @@ function addEvent(typ) {
   current.events.push({ t: Date.now(), typ, gueltig: true, voidT: null });
   saveSession(current);
   updateCountUI();
+  renderLiveCharts();
   flash(typ === "out" ? "#btn-out" : "#btn-in");
 }
 
@@ -155,6 +157,7 @@ function undoLast() {
       current.events[i].voidT = Date.now();
       saveSession(current);
       updateCountUI();
+      renderLiveCharts();
       flash("#btn-undo");
       return;
     }
@@ -184,8 +187,6 @@ function updateCountUI() {
   qs("#est-titel").textContent = est.titel;
   qs("#est-detail").textContent = est.detail;
   qs("#est-variante").textContent = "Variante: " + ESTIMATOR_LABEL[settings.estimator];
-
-  renderLiveCharts();
 }
 
 // Live-Charts waehrend des Zaehlens. Erst ab LIVE_CHART_MIN Ausfluegen sichtbar.
@@ -193,7 +194,7 @@ function renderLiveCharts() {
   const box = qs("#live-charts");
   const nOut = validEvents(current.events).filter((e) => e.typ === "out").length;
   if (nOut < LIVE_CHART_MIN) { box.style.display = "none"; return; }
-  box.style.display = "flex";
+  box.style.display = "grid";
   renderCumulative(qs("#live-chart-cum"), netSeries(current.events), current.startMs, 130);
   renderHistogram(qs("#live-chart-hist"), exitsPerMinute(current.events, current.startMs, Date.now()), 120);
 }
