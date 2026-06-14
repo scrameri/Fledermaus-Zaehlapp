@@ -9,22 +9,22 @@
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="apple-touch-icon" href="icons/icon-192.png" />
   <link rel="stylesheet" href="css/style.css" />
-  <title>Fledermaus-Zaehlapp</title>
+  <title>Fledermaus-Zählapp</title>
 </head>
 <body>
 
   <!-- Startansicht -->
   <section id="view-start" class="view active">
     <header class="app-header">
-      <div class="brand"><span class="bat">&#129415;</span> Fledermaus-Zaehlung</div>
+      <div class="brand"><span class="bat">&#129415;</span> Fledermaus-Zählung</div>
       <button id="btn-settings" class="icon-btn" title="Einstellungen">&#9881;</button>
     </header>
     <main class="content">
       <div id="resume-banner" class="resume" style="display:none">
-        <div>Laufende Zaehlung: <b id="resume-info"></b></div>
+        <div>Laufende Zählung: <b id="resume-info"></b></div>
         <button id="btn-resume" class="btn small">Fortsetzen</button>
       </div>
-      <button id="btn-new" class="btn primary big-cta">+ Neue Zaehlung</button>
+      <button id="btn-new" class="btn primary big-cta">+ Neue Zählung</button>
       <div id="session-list" class="list"></div>
       <button id="btn-export-all" class="btn ghost full">Alle als Excel exportieren</button>
     </main>
@@ -34,7 +34,7 @@
   <section id="view-setup" class="view">
     <header class="app-header">
       <button id="btn-setup-back" class="icon-btn">&#8592;</button>
-      <div class="brand">Neue Zaehlung</div>
+      <div class="brand">Neue Zählung</div>
       <span class="icon-btn" style="visibility:hidden">&#9881;</span>
     </header>
     <main class="content">
@@ -51,7 +51,7 @@
         <select id="in-beob"></select>
       </label>
       <p class="muted small">Start- und Endzeit werden automatisch erfasst (Start jetzt beim Tippen, Ende beim Beenden). Beide lassen sich danach korrigieren.</p>
-      <button id="btn-start" class="btn primary big-cta">Zaehlung starten</button>
+      <button id="btn-start" class="btn primary big-cta">Zählung starten</button>
     </main>
   </section>
 
@@ -70,8 +70,8 @@
         <div class="saldo-label">Netto-Anzahl</div>
         <div id="saldo" class="saldo">0</div>
         <div class="ministats">
-          <span>Ausfluege <b id="stat-out">0</b></span>
-          <span>Einfluege <b id="stat-in">0</b></span>
+          <span>Ausflüge <b id="stat-out">0</b></span>
+          <span>Einflüge <b id="stat-in">0</b></span>
           <span>Korrekturen <b id="stat-korr">0</b></span>
         </div>
       </div>
@@ -88,7 +88,7 @@
           <div id="live-chart-cum" class="chart"></div>
         </div>
         <div class="card mini">
-          <div class="card-title">Ausfluege je Minute</div>
+          <div class="card-title">Ausflüge je Minute</div>
           <div id="live-chart-hist" class="chart"></div>
         </div>
       </div>
@@ -98,7 +98,7 @@
         <button id="btn-in" class="cbtn in">-1<small>Einflug</small></button>
       </div>
       <div class="count-buttons2">
-        <button id="btn-undo" class="btn ghost">&#8630; Korrektur (Fehlzaehlung)</button>
+        <button id="btn-undo" class="btn ghost">&#8630; Korrektur (Fehlzählung)</button>
         <button id="btn-finish" class="btn secondary">Beenden</button>
       </div>
     </main>
@@ -116,8 +116,8 @@
       </div>
       <div class="res-kpis">
         <div class="kpi big"><span id="res-netto">0</span><small>Netto-Tiere</small></div>
-        <div class="kpi"><span id="res-out">0</span><small>Ausfluege</small></div>
-        <div class="kpi"><span id="res-in">0</span><small>Einfluege</small></div>
+        <div class="kpi"><span id="res-out">0</span><small>Ausflüge</small></div>
+        <div class="kpi"><span id="res-in">0</span><small>Einflüge</small></div>
         <div class="kpi"><span id="res-korr">0</span><small>Korrekturen</small></div>
       </div>
 
@@ -126,7 +126,7 @@
         <div id="chart-cum" class="chart"></div>
       </div>
       <div class="card">
-        <div class="card-title">Ausfluege je Minute</div>
+        <div class="card-title">Ausflüge je Minute</div>
         <div id="chart-hist" class="chart"></div>
       </div>
 
@@ -142,7 +142,7 @@
         <textarea id="res-notiz" rows="2" placeholder="optional"></textarea>
       </label>
 
-      <button id="btn-res-export" class="btn secondary full">Diese Zaehlung als Excel exportieren</button>
+      <button id="btn-res-export" class="btn secondary full">Diese Zählung als Excel exportieren</button>
       <button id="btn-res-save" class="btn primary full">Speichern &amp; schliessen</button>
     </main>
   </section>
@@ -163,7 +163,7 @@
         </select>
       </label>
 
-      <label class="field">Live-Schaetzung (wann aufhoeren)
+      <label class="field">Live-Schätzung (wann aufhören)
         <select id="set-estimator">
           <option value="stille">Stille-Regel</option>
           <option value="rate">Raten-basiert</option>
@@ -191,7 +191,7 @@
       </div>
 
       <button id="btn-set-save" class="btn primary full">Speichern</button>
-      <p class="muted small center">Fledermaus-Zaehlapp &middot; offline &middot; lokale Daten</p>
+      <p class="muted small center">Fledermaus-Zählapp &middot; offline &middot; lokale Daten</p>
     </main>
   </section>
 

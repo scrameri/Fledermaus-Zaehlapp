@@ -73,7 +73,7 @@ async function deleteSession(id) {
 const SETTINGS_KEY = "fz-settings";
 const DEFAULT_SETTINGS = {
   theme: "dunkel",            // dunkel | nacht | hell
-  estimator: "stille",       // stille | rate | fit
+  estimator: "fit",          // stille | rate | fit (Standard: Kurven-Fit)
   stilleMinuten: 5,           // Schwelle Stille-Regel
   rateFenster: 5,             // Fensterbreite Minuten (Raten-Regel)
   rateAnteil: 10,             // Prozent der Spitzenrate (Raten-Regel)

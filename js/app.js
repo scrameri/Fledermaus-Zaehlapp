@@ -62,7 +62,7 @@ async function renderStart() {
   }
 
   if (list.length === 0) {
-    cont.innerHTML = '<p class="muted center">Noch keine Zaehlungen. Tippe auf "Neue Zaehlung".</p>';
+    cont.innerHTML = '<p class="muted center">Noch keine Zählungen. Tippe auf "Neue Zählung".</p>';
     return;
   }
   for (const s of list) {
@@ -75,18 +75,18 @@ async function renderStart() {
         '<div class="sc-title">' + esc(s.art) + '</div>' +
         '<div class="muted">' + esc(s.ort) + ' &middot; ' + esc(s.datum) + ' &middot; ' + esc(s.beobachter) + '</div>' +
         '<div class="sc-stat">Netto <b>' + netto + '</b> Tiere' +
-          (s.status === "running" ? ' <span class="badge-run">laeuft</span>' : '') + '</div>' +
+          (s.status === "running" ? ' <span class="badge-run">läuft</span>' : '') + '</div>' +
       '</div>' +
       '<div class="sc-actions">' +
-        '<button class="icon-btn" data-act="open" title="Oeffnen">&#9654;</button>' +
+        '<button class="icon-btn" data-act="open" title="Öffnen">&#9654;</button>' +
         '<button class="icon-btn" data-act="xls" title="Excel">&#8675;</button>' +
-        '<button class="icon-btn danger" data-act="del" title="Loeschen">&#128465;</button>' +
+        '<button class="icon-btn danger" data-act="del" title="Löschen">&#128465;</button>' +
       '</div>';
     card.querySelector('[data-act="open"]').onclick = () =>
       s.status === "running" ? openCount(s) : openResult(s);
     card.querySelector('[data-act="xls"]').onclick = () => exportSessions([s]);
     card.querySelector('[data-act="del"]').onclick = async () => {
-      if (confirm("Diese Zaehlung loeschen?")) { await deleteSession(s.id); renderStart(); }
+      if (confirm("Diese Zählung löschen?")) { await deleteSession(s.id); renderStart(); }
     };
     cont.appendChild(card);
   }
@@ -99,9 +99,9 @@ function esc(s) {
 
 // --- Setup ----------------------------------------------------------------
 function openSetup() {
-  fillSelect(qs("#in-ort"), ORTE, "Ort waehlen");
-  fillSelect(qs("#in-art"), ARTEN, "Art waehlen");
-  fillSelect(qs("#in-beob"), BEOBACHTER, "Beobachter/-in waehlen");
+  fillSelect(qs("#in-ort"), ORTE, "Ort wählen");
+  fillSelect(qs("#in-art"), ARTEN, "Art wählen");
+  fillSelect(qs("#in-beob"), BEOBACHTER, "Beobachter/-in wählen");
   if (ORTE.length === 1) qs("#in-ort").value = ORTE[0];
   if (BEOBACHTER.length === 1) qs("#in-beob").value = BEOBACHTER[0];
   qs("#in-datum").value = ymdToInput(todayYMD());
@@ -113,7 +113,7 @@ function startCounting() {
   const art = qs("#in-art").value;
   const beob = qs("#in-beob").value;
   const datum = inputToYmd(qs("#in-datum").value);
-  if (!ort || !art || !beob || !datum) { alert("Bitte Ort, Art, Datum und Beobachter waehlen."); return; }
+  if (!ort || !art || !beob || !datum) { alert("Bitte Ort, Art, Datum und Beobachter wählen."); return; }
   current = {
     id: crypto.randomUUID(),
     ort, art, beobachter: beob, datum,
@@ -199,7 +199,7 @@ function renderLiveCharts() {
 }
 
 function finishCounting() {
-  if (!confirm("Zaehlung beenden?")) return;
+  if (!confirm("Zählung beenden?")) return;
   current.endMs = Date.now();
   current.status = "finished";
   current.estimatorUsed = settings.estimator;

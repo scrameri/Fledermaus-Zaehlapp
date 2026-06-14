@@ -65,7 +65,7 @@ function estimateStille(events, nowMs, settings) {
   if (rest <= 0) {
     return {
       status: "stoppen",
-      titel: "Kann aufhoeren",
+      titel: "Kann aufhören",
       detail: "Seit " + fmtMMSS(seitLetztem) + " kein Ausflug (Schwelle " +
         settings.stilleMinuten + " Min erreicht)."
     };
@@ -87,7 +87,7 @@ function estimateRate(events, nowMs, startMs, settings) {
   const fensterMs = (settings.rateFenster || 5) * 60000;
   const anteil = (settings.rateAnteil || 10) / 100;
   if (xs.length < 5) {
-    return { status: "warten", titel: "Zu wenig Daten", detail: "Mind. 5 Ausfluege noetig." };
+    return { status: "warten", titel: "Zu wenig Daten", detail: "Mind. 5 Ausflüge nötig." };
   }
   // Spitzenrate: max. Anzahl Ausfluege in einem gleitenden Fenster ueber den Verlauf.
   let peak = 0;
@@ -101,7 +101,7 @@ function estimateRate(events, nowMs, startMs, settings) {
   if (aktuell <= schwelle) {
     return {
       status: "stoppen",
-      titel: "Kann aufhoeren",
+      titel: "Kann aufhören",
       detail: "Rate " + proMin.toFixed(1) + "/Min liegt unter " +
         settings.rateAnteil + "% der Spitze (" + (peak / (settings.rateFenster || 5)).toFixed(1) + "/Min)."
     };
@@ -121,7 +121,7 @@ function estimateRate(events, nowMs, startMs, settings) {
 function estimateFit(events, nowMs, startMs, settings) {
   const ser = netSeries(events).filter((p) => p.saldo > 0);
   if (ser.length < 8) {
-    return { status: "warten", titel: "Zu wenig Daten", detail: "Mind. 8 Ausfluege fuer Kurven-Fit." };
+    return { status: "warten", titel: "Zu wenig Daten", detail: "Mind. 8 Ausflüge für Kurven-Fit." };
   }
   const t0 = startMs || ser[0].t;
   const pts = ser.map((p) => ({ x: (p.t - t0) / 60000, y: p.saldo })); // x in Minuten
@@ -160,15 +160,15 @@ function estimateFit(events, nowMs, startMs, settings) {
   if (restMin <= 0) {
     return {
       status: "stoppen",
-      titel: "Kann aufhoeren",
-      detail: "Geschaetzte Koloniegroesse ~" + geschaetztTotal + ". " +
+      titel: "Kann aufhören",
+      detail: "Geschätzte Koloniegrösse ~" + geschaetztTotal + ". " +
         (settings.fitProzent || 99) + "% sind ausgeflogen."
     };
   }
   return {
     status: "warten",
     titel: "Weiter schauen",
-    detail: "Geschaetzt ~" + geschaetztTotal + " Tiere. Noch ca. " +
+    detail: "Geschätzt ~" + geschaetztTotal + " Tiere. Noch ca. " +
       fmtMMSS(restMin * 60) + " bis " + (settings.fitProzent || 99) + "% ausgeflogen.",
     restSek: restMin * 60,
     fit: best

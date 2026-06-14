@@ -1,7 +1,7 @@
 {
-  "name": "Fledermaus-Zaehlapp",
+  "name": "Fledermaus-Zählapp",
   "short_name": "Fledermaus",
-  "description": "Ausflugzaehlung von Fledermauskolonien im Feld, offline.",
+  "description": "Ausflugzählung von Fledermauskolonien im Feld, offline.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
