@@ -69,6 +69,54 @@ function logNormCdf(xMin, mu, sigma) {
   return normCdf((Math.log(xMin) - mu) / sigma);
 }
 
+// ln Gamma via Lanczos-Approximation.
+function logGamma(z) {
+  const c = [
+    0.99999999999980993, 676.5203681218851, -1259.1392167224028,
+    771.32342877765313, -176.61502916214059, 12.507343278686905,
+    -0.13857109526572012, 9.9843695780195716e-6, 1.5056327351493116e-7
+  ];
+  if (z < 0.5) return Math.log(Math.PI / Math.sin(Math.PI * z)) - logGamma(1 - z);
+  z -= 1;
+  let x = c[0];
+  for (let i = 1; i < 9; i++) x += c[i] / (z + i);
+  const t = z + 7.5;
+  return 0.5 * Math.log(2 * Math.PI) + (z + 0.5) * Math.log(t) - t + Math.log(x);
+}
+
+// Regularisierte untere unvollstaendige Gamma-Funktion P(a,x)=gamma(a,x)/Gamma(a).
+// Reihe fuer x<a+1, Kettenbruch (Lentz) sonst. Standardverfahren (Numerical Recipes).
+function gammaP(a, x) {
+  if (x <= 0 || a <= 0) return x <= 0 ? 0 : 1;
+  if (x < a + 1) {
+    let ap = a, sum = 1 / a, del = sum;
+    for (let i = 0; i < 300; i++) {
+      ap += 1; del *= x / ap; sum += del;
+      if (Math.abs(del) < Math.abs(sum) * 1e-13) break;
+    }
+    return sum * Math.exp(-x + a * Math.log(x) - logGamma(a));
+  }
+  const tiny = 1e-300;
+  let b = x + 1 - a, c = 1 / tiny, d = 1 / b, h = d;
+  for (let i = 1; i < 300; i++) {
+    const an = -i * (i - a);
+    b += 2;
+    d = an * d + b; if (Math.abs(d) < tiny) d = tiny;
+    c = b + an / c; if (Math.abs(c) < tiny) c = tiny;
+    d = 1 / d;
+    const del = d * c; h *= del;
+    if (Math.abs(del - 1) < 1e-13) break;
+  }
+  const Q = Math.exp(-x + a * Math.log(x) - logGamma(a)) * h;
+  return 1 - Q;
+}
+
+// Gamma-CDF mit Form k und Skala theta: F(x)=P(k, x/theta). x in Minuten ab t0.
+function gammaCdf(xMin, k, theta) {
+  if (xMin <= 0) return 0;
+  return gammaP(k, xMin / theta);
+}
+
 // --- Variante 1: Stille-Regel ---------------------------------------------
 // Stoppen, wenn seit dem letzten Ausflug X Minuten ohne Ausflug vergangen sind.
 function estimateStille(events, nowMs, settings) {
@@ -271,7 +319,81 @@ function estimatePoisson(events, nowMs, startMs, settings) {
   };
 }
 
-// --- Variante 5: Schwanz-Rate (robust) ------------------------------------
+// --- Variante 6: Poisson-Prozess mit Gamma-Rate ---------------------------
+// Wie estimatePoisson, aber mit Gamma-Dichte f (Form k, Skala theta) statt
+// Log-Normal. Der Gamma-Schwanz faellt exponentiell ab, also deutlich leichter
+// als der Log-Normal-Schwanz; das zaehmt die Ueberschaetzung von N und liefert
+// kuerzere, meist realistischere Restzeiten. N wieder geschlossen: N=n/F(jetzt).
+function estimateGamma(events, nowMs, startMs, settings) {
+  const xs = exitTimes(events);
+  if (xs.length < 8) {
+    return { status: "warten", titel: "Zu wenig Daten", detail: "Mind. 8 Ausflüge für Gamma-Schätzung." };
+  }
+  const t0 = startMs || xs[0];
+  const nowMin = (nowMs - t0) / 60000;
+  if (nowMin <= 0) {
+    return { status: "warten", titel: "Warten", detail: "Noch keine verwertbare Zeitspanne." };
+  }
+  const x = xs.map((t) => Math.max(1e-4, (t - t0) / 60000));
+  const n = x.length;
+  const sumX = x.reduce((a, b) => a + b, 0);
+  const sumLnX = x.reduce((a, b) => a + Math.log(b), 0);
+  const xbar = sumX / n;
+  let xvar = 0;
+  for (const v of x) xvar += (v - xbar) * (v - xbar);
+  xvar = Math.max(1e-6, xvar / n);
+  // Momenten-Startwerte (k=mean^2/var, theta=var/mean), Grid grosszuegig.
+  const k0 = Math.max(0.5, xbar * xbar / xvar);
+  const th0 = Math.max(0.1, xvar / xbar);
+
+  // Zensierte Profil-LL (N herausprofiliert):
+  //   G = (k-1)*sum ln x - sum x/theta - n*k*ln(theta) - n*lnGamma(k) - n*ln F(jetzt).
+  let best = { k: k0, theta: th0, g: -Infinity };
+  const KN = 36, TN = 36;
+  for (let i = 0; i <= KN; i++) {
+    const k = k0 * (0.3 + 4.7 * (i / KN));      // 0.3*k0 .. 5*k0
+    const lg = logGamma(k);
+    for (let j = 0; j <= TN; j++) {
+      const theta = th0 * (0.3 + 4.7 * (j / TN));
+      const Fnow = gammaCdf(nowMin, k, theta);
+      if (Fnow <= 1e-6) continue;
+      const g = (k - 1) * sumLnX - sumX / theta - n * k * Math.log(theta) - n * lg - n * Math.log(Fnow);
+      if (g > best.g) best = { k, theta, g };
+    }
+  }
+
+  const Fnow = Math.max(1e-3, gammaCdf(nowMin, best.k, best.theta));
+  const Ntot = n / Fnow;
+  const muRest = Ntot * (1 - Fnow);
+  const pDone = Math.exp(-muRest);
+  const schwelle = settings.gammaRest || 1;
+  const Nround = Math.round(Ntot);
+  const pTxt = pDone < 0.005 ? "<1%" : Math.round(pDone * 100) + "%";
+
+  if (muRest <= schwelle) {
+    return {
+      status: "stoppen",
+      titel: "Kann aufhören",
+      detail: "Geschätzt ~" + Nround + " Tiere, erwartet noch <" + schwelle.toFixed(1) +
+        " (P(fertig) " + pTxt + ")."
+    };
+  }
+  const Ftarget = 1 - schwelle / Ntot;
+  let restMin = -1;
+  for (let dt = 0; dt <= 180; dt += 0.25) {
+    if (gammaCdf(nowMin + dt, best.k, best.theta) >= Ftarget) { restMin = dt; break; }
+  }
+  return {
+    status: "warten",
+    titel: "Weiter schauen",
+    detail: "Geschätzt ~" + Nround + " Tiere, erwartet noch ~" + muRest.toFixed(1) +
+      " (P(fertig) " + pTxt + "). Noch ca. " + (restMin < 0 ? ">180:00" : fmtMMSS(restMin * 60)) + ".",
+    restSek: restMin < 0 ? null : restMin * 60,
+    fit: best
+  };
+}
+
+// --- Variante 5: Long-Tail (robust, raten-basiert) ------------------------
 // Modelliert nur den abklingenden Schwanz statt der ganzen Kurve: nach dem Peak
 // lambda(t) ~ lambda_jetzt*exp(-(t-jetzt)/tau). tau aus dem Verhaeltnis zweier
 // benachbarter Fenster (r0 davor, r1 zuletzt): tau = W / ln(r0/r1). Erwartete
@@ -341,6 +463,7 @@ function runEstimator(events, nowMs, startMs, settings) {
     case "rate": return estimateRate(events, nowMs, startMs, settings);
     case "fit": return estimateFit(events, nowMs, startMs, settings);
     case "poisson": return estimatePoisson(events, nowMs, startMs, settings);
+    case "gamma": return estimateGamma(events, nowMs, startMs, settings);
     case "tail": return estimateTail(events, nowMs, startMs, settings);
     case "stille":
     default: return estimateStille(events, nowMs, settings);

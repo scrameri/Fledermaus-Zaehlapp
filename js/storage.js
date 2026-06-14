@@ -73,14 +73,15 @@ async function deleteSession(id) {
 const SETTINGS_KEY = "fz-settings";
 const DEFAULT_SETTINGS = {
   theme: "dunkel",            // dunkel | nacht | hell
-  estimator: "poisson",      // stille | rate | fit | poisson | tail (Standard: Poisson)
+  estimator: "tail",         // stille | rate | fit | poisson | gamma | tail (Standard: Long-Tail)
   stilleMinuten: 5,           // Schwelle Stille-Regel
   rateFenster: 5,             // Fensterbreite Minuten (Raten-Regel)
   rateAnteil: 10,             // Prozent der Spitzenrate (Raten-Regel)
   fitProzent: 99,             // Saettigungs-Prozent fuer Kurven-Fit
-  poissonRest: 0.5,           // Poisson: erwartete Resttiere bis Stopp
-  tailFenster: 5,             // Schwanz-Rate: Fensterbreite Minuten
-  tailRest: 0.5              // Schwanz-Rate: erwartete Resttiere bis Stopp
+  poissonRest: 1,             // Poisson (Log-Normal): erwartete Resttiere bis Stopp
+  gammaRest: 1,               // Poisson (Gamma): erwartete Resttiere bis Stopp
+  tailFenster: 5,             // Long-Tail: Fensterbreite Minuten
+  tailRest: 1                // Long-Tail: erwartete Resttiere bis Stopp
 };
 
 function loadSettings() {

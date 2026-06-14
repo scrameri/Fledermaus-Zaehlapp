@@ -173,7 +173,8 @@
           <option value="rate">Raten-basiert</option>
           <option value="fit">Kurven-Fit</option>
           <option value="poisson">Poisson (Log-Normal)</option>
-          <option value="tail">Schwanz-Rate</option>
+          <option value="gamma">Poisson (Gamma)</option>
+          <option value="tail">Long-Tail</option>
         </select>
       </label>
 
@@ -199,7 +200,13 @@
         <label class="field">Stopp bei erwarteten Resttieren unter
           <input id="set-poisson-rest" type="number" min="0.1" max="10" step="0.1" />
         </label>
-        <p class="muted small">Ausflüge als Poisson-Prozess mit rechtsschiefer Log-Normal-Rate. Zeigt geschätzte Koloniegrösse und die Wahrscheinlichkeit, dass keiner mehr kommt. Realistischer Schwanz, daher längere Restzeit als der Kurven-Fit.</p>
+        <p class="muted small">Ausflüge als Poisson-Prozess mit rechtsschiefer Log-Normal-Rate. Zeigt geschätzte Koloniegrösse und die Wahrscheinlichkeit, dass keiner mehr kommt. Schwerer Schwanz, daher eher konservativ (lange Restzeiten).</p>
+      </div>
+      <div id="grp-gamma" class="setgrp">
+        <label class="field">Stopp bei erwarteten Resttieren unter
+          <input id="set-gamma-rest" type="number" min="0.1" max="10" step="0.1" />
+        </label>
+        <p class="muted small">Wie Poisson (Log-Normal), aber mit Gamma-Rate. Leichterer, exponentiell abfallender Schwanz, daher kürzere und meist realistischere Restzeiten und Koloniegrösse.</p>
       </div>
       <div id="grp-tail" class="setgrp">
         <label class="field">Fensterbreite (Minuten)

@@ -267,6 +267,7 @@ function openSettings() {
   qs("#set-rate-anteil").value = settings.rateAnteil;
   qs("#set-fit").value = settings.fitProzent;
   qs("#set-poisson-rest").value = settings.poissonRest;
+  qs("#set-gamma-rest").value = settings.gammaRest;
   qs("#set-tail-fenster").value = settings.tailFenster;
   qs("#set-tail-rest").value = settings.tailRest;
   updateSettingsVisibility();
@@ -279,6 +280,7 @@ function updateSettingsVisibility() {
   qs("#grp-rate").style.display = v === "rate" ? "block" : "none";
   qs("#grp-fit").style.display = v === "fit" ? "block" : "none";
   qs("#grp-poisson").style.display = v === "poisson" ? "block" : "none";
+  qs("#grp-gamma").style.display = v === "gamma" ? "block" : "none";
   qs("#grp-tail").style.display = v === "tail" ? "block" : "none";
 }
 
@@ -289,9 +291,10 @@ function saveSettingsView() {
   settings.rateFenster = Number(qs("#set-rate-fenster").value) || 5;
   settings.rateAnteil = Number(qs("#set-rate-anteil").value) || 10;
   settings.fitProzent = Number(qs("#set-fit").value) || 99;
-  settings.poissonRest = Number(qs("#set-poisson-rest").value) || 0.5;
+  settings.poissonRest = Number(qs("#set-poisson-rest").value) || 1;
+  settings.gammaRest = Number(qs("#set-gamma-rest").value) || 1;
   settings.tailFenster = Number(qs("#set-tail-fenster").value) || 5;
-  settings.tailRest = Number(qs("#set-tail-rest").value) || 0.5;
+  settings.tailRest = Number(qs("#set-tail-rest").value) || 1;
   saveSettings(settings);
   applyTheme();
   show("view-start");

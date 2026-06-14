@@ -19,7 +19,7 @@ function hms(ms) {
   return pad2(d.getHours()) + ":" + pad2(d.getMinutes()) + ":" + pad2(d.getSeconds());
 }
 
-const ESTIMATOR_LABEL = { stille: "Stille-Regel", rate: "Raten-basiert", fit: "Kurven-Fit", poisson: "Poisson (Log-Normal)", tail: "Schwanz-Rate" };
+const ESTIMATOR_LABEL = { stille: "Stille-Regel", rate: "Raten-basiert", fit: "Kurven-Fit", poisson: "Poisson (Log-Normal)", gamma: "Poisson (Gamma)", tail: "Long-Tail" };
 
 function buildWorkbook(sessions) {
   const meta = [];

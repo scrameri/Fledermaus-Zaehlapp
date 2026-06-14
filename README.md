@@ -44,7 +44,7 @@ Alle Daten bleiben lokal auf dem Gerät.
   bleibt zur Nachvollziehbarkeit als ungültig im Export erhalten.
 - Sekundengenaue Protokollierung jedes Ereignisses als Grundlage für die
   statistische Modellierung des Ausflugverhaltens.
-- Live-Schätzung der Restbeobachtungszeit, fünf umschaltbare Varianten.
+- Live-Schätzung der Restbeobachtungszeit, sechs umschaltbare Varianten.
 - Grafische Auswertung: kumulative Ausflugkurve und Ausflüge je Minute, schon
   während des Zählens und im Resultat.
 - Strukturierter Excel-Export.
@@ -68,7 +68,7 @@ Alle Daten bleiben lokal auf dem Gerät.
 
 Ziel ist zu erkennen, wie lange nach dem voraussichtlich letzten Ausflug noch
 zu beobachten ist, ohne welche zu verpassen und ohne unnötig lange zu warten.
-Fünf Varianten, umschaltbar unter Einstellungen (Standard: Poisson):
+Sechs Varianten, umschaltbar unter Einstellungen (Standard: Long-Tail):
 
 - Stille-Regel: Stopp-Empfehlung, wenn seit dem letzten Ausflug eine einstellbare
   Zahl Minuten ohne Ausflug vergangen ist. Einfach und robust, ignoriert aber den
@@ -86,12 +86,18 @@ Fünf Varianten, umschaltbar unter Einstellungen (Standard: Poisson):
   poissonverteilt mit Mittel mu_rest = N · (1 − F(jetzt)); angezeigt werden
   geschätzte Koloniegrösse, erwartete Resttiere und die Wahrscheinlichkeit, dass
   keiner mehr kommt (e^(−mu_rest)). Gestoppt wird, wenn die erwarteten Resttiere
-  unter eine Schwelle fallen. Der realistische Schwanz liefert längere, ehrlichere
-  Restzeiten als der Kurven-Fit; Standardvariante.
-- Schwanz-Rate: modelliert nur den abklingenden Schwanz nach dem Peak als
+  unter eine Schwelle fallen. Der Log-Normal-Schwanz ist schwer, daher eher
+  konservativ: gute obere Schätzung von N, aber tendenziell lange Restzeiten.
+- Poisson (Gamma): gleiches Verfahren, aber mit Gamma- statt Log-Normal-Rate. Der
+  Gamma-Schwanz fällt exponentiell ab, also deutlich leichter; das zähmt die
+  Überschätzung von N und liefert kürzere, meist realistischere Restzeiten. Guter
+  Mittelweg zwischen Log-Normal und Long-Tail.
+- Long-Tail: modelliert nur den abklingenden Schwanz nach dem Peak als
   exponentiellen Zerfall (Zeitkonstante aus dem Verhältnis zweier Fenster) und
   rechnet die erwarteten Resttiere hoch. Robust und parameterarm, ohne globale
-  Kurvenanpassung; extrapoliert erst bei klar fallender Rate.
+  Kurvenanpassung; extrapoliert erst bei klar fallender Rate. Reagiert auf den
+  lokalen Ratenrückgang und gibt die kürzesten, im Feld praktischsten Restzeiten;
+  Standardvariante.
 
 Die eigentliche, belastbare Modellierung erfolgt bewusst separat (zum Beispiel in
 R) auf Basis des Ereignis-Exports. Die App liefert dafür die Rohdaten und im Feld
@@ -149,7 +155,7 @@ index.html              App-Gerüst (alle Ansichten)
 css/style.css           Themes (Dunkel, Nacht, Hell) und Layout
 js/data.js              Referenzlisten (Orte, Arten, Beobachter)
 js/storage.js           IndexedDB und Einstellungen
-js/estimate.js          Zählreihen und die fünf Schätzvarianten
+js/estimate.js          Zählreihen und die sechs Schätzvarianten
 js/charts.js            SVG-Diagramme
 js/export.js            Excel-Export
 js/app.js               Ablaufsteuerung und Ansichten
