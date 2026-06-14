@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
+  <meta name="theme-color" content="#12100e" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="apple-touch-icon" href="icons/icon-192.png" />
+  <link rel="stylesheet" href="css/style.css" />
+  <title>Fledermaus-Zaehlapp</title>
+</head>
+<body>
+
+  <!-- Startansicht -->
+  <section id="view-start" class="view active">
+    <header class="app-header">
+      <div class="brand"><span class="bat">&#128012;</span> Fledermaus-Zaehlung</div>
+      <button id="btn-settings" class="icon-btn" title="Einstellungen">&#9881;</button>
+    </header>
+    <main class="content">
+      <div id="resume-banner" class="resume" style="display:none">
+        <div>Laufende Zaehlung: <b id="resume-info"></b></div>
+        <button id="btn-resume" class="btn small">Fortsetzen</button>
+      </div>
+      <button id="btn-new" class="btn primary big-cta">+ Neue Zaehlung</button>
+      <div id="session-list" class="list"></div>
+      <button id="btn-export-all" class="btn ghost full">Alle als Excel exportieren</button>
+    </main>
+  </section>
+
+  <!-- Setup -->
+  <section id="view-setup" class="view">
+    <header class="app-header">
+      <button id="btn-setup-back" class="icon-btn">&#8592;</button>
+      <div class="brand">Neue Zaehlung</div>
+      <span class="icon-btn" style="visibility:hidden">&#9881;</span>
+    </header>
+    <main class="content">
+      <label class="field">Ort
+        <select id="in-ort"></select>
+      </label>
+      <label class="field">Fledermausart
+        <select id="in-art"></select>
+      </label>
+      <label class="field">Datum
+        <input id="in-datum" type="date" />
+      </label>
+      <label class="field">Beobachter/-in
+        <select id="in-beob"></select>
+      </label>
+      <p class="muted small">Start- und Endzeit werden automatisch erfasst (Start jetzt beim Tippen, Ende beim Beenden). Beide lassen sich danach korrigieren.</p>
+      <button id="btn-start" class="btn primary big-cta">Zaehlung starten</button>
+    </main>
+  </section>
+
+  <!-- Zaehlen -->
+  <section id="view-count" class="view">
+    <header class="app-header">
+      <button id="btn-count-min" class="icon-btn" title="Pausieren / Liste">&#8801;</button>
+      <div class="brand count-head">
+        <span id="count-art"></span>
+        <small id="count-ort" class="muted"></small>
+      </div>
+      <div class="timer">&#9201; <span id="elapsed">00:00</span></div>
+    </header>
+    <main class="content count-main">
+      <div class="saldo-wrap">
+        <div class="saldo-label">Netto-Anzahl</div>
+        <div id="saldo" class="saldo">0</div>
+        <div class="ministats">
+          <span>Ausfluege <b id="stat-out">0</b></span>
+          <span>Einfluege <b id="stat-in">0</b></span>
+          <span>Korrekturen <b id="stat-korr">0</b></span>
+        </div>
+      </div>
+
+      <div id="estimate" class="estimate">
+        <div id="est-titel" class="est-titel">-</div>
+        <div id="est-detail" class="est-detail muted">-</div>
+        <div id="est-variante" class="est-variante muted small">-</div>
+      </div>
+
+      <div class="count-buttons">
+        <button id="btn-out" class="cbtn out">+1<small>Ausflug</small></button>
+        <button id="btn-in" class="cbtn in">-1<small>Einflug</small></button>
+      </div>
+      <div class="count-buttons2">
+        <button id="btn-undo" class="btn ghost">&#8630; Korrektur (Fehlzaehlung)</button>
+        <button id="btn-finish" class="btn secondary">Beenden</button>
+      </div>
+    </main>
+  </section>
+
+  <!-- Resultat -->
+  <section id="view-result" class="view">
+    <header class="app-header">
+      <div class="brand">Resultat</div>
+    </header>
+    <main class="content">
+      <div class="res-head">
+        <div id="res-title" class="res-title"></div>
+        <div id="res-sub" class="muted"></div>
+      </div>
+      <div class="res-kpis">
+        <div class="kpi big"><span id="res-netto">0</span><small>Netto-Tiere</small></div>
+        <div class="kpi"><span id="res-out">0</span><small>Ausfluege</small></div>
+        <div class="kpi"><span id="res-in">0</span><small>Einfluege</small></div>
+        <div class="kpi"><span id="res-korr">0</span><small>Korrekturen</small></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Kumulative Ausflugkurve</div>
+        <div id="chart-cum" class="chart"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Ausfluege je Minute</div>
+        <div id="chart-hist" class="chart"></div>
+      </div>
+
+      <div class="time-edit">
+        <label class="field">Startzeit
+          <input id="res-start" type="time" step="1" />
+        </label>
+        <label class="field">Endzeit
+          <input id="res-end" type="time" step="1" />
+        </label>
+      </div>
+      <label class="field">Notiz
+        <textarea id="res-notiz" rows="2" placeholder="optional"></textarea>
+      </label>
+
+      <button id="btn-res-export" class="btn secondary full">Diese Zaehlung als Excel exportieren</button>
+      <button id="btn-res-save" class="btn primary full">Speichern &amp; schliessen</button>
+    </main>
+  </section>
+
+  <!-- Einstellungen -->
+  <section id="view-settings" class="view">
+    <header class="app-header">
+      <button id="btn-set-back" class="icon-btn">&#8592;</button>
+      <div class="brand">Einstellungen</div>
+      <span class="icon-btn" style="visibility:hidden">&#9881;</span>
+    </header>
+    <main class="content">
+      <label class="field">Design
+        <select id="set-theme">
+          <option value="dunkel">Dunkel</option>
+          <option value="nacht">Nacht (rot, schont Nachtsicht)</option>
+          <option value="hell">Hell</option>
+        </select>
+      </label>
+
+      <label class="field">Live-Schaetzung (wann aufhoeren)
+        <select id="set-estimator">
+          <option value="stille">Stille-Regel</option>
+          <option value="rate">Raten-basiert</option>
+          <option value="fit">Kurven-Fit</option>
+        </select>
+      </label>
+
+      <div id="grp-stille" class="setgrp">
+        <label class="field">Schwelle: Minuten ohne Ausflug bis Stopp-Empfehlung
+          <input id="set-stille" type="number" min="1" max="60" step="1" />
+        </label>
+      </div>
+      <div id="grp-rate" class="setgrp">
+        <label class="field">Fensterbreite (Minuten)
+          <input id="set-rate-fenster" type="number" min="1" max="30" step="1" />
+        </label>
+        <label class="field">Stopp bei Rate unter (% der Spitze)
+          <input id="set-rate-anteil" type="number" min="1" max="100" step="1" />
+        </label>
+      </div>
+      <div id="grp-fit" class="setgrp">
+        <label class="field">Stopp bei ausgeflogenem Anteil (%)
+          <input id="set-fit" type="number" min="80" max="100" step="1" />
+        </label>
+      </div>
+
+      <button id="btn-set-save" class="btn primary full">Speichern</button>
+      <p class="muted small center">Fledermaus-Zaehlapp &middot; offline &middot; lokale Daten</p>
+    </main>
+  </section>
+
+  <script src="js/data.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/estimate.js"></script>
+  <script src="js/charts.js"></script>
+  <script src="lib/xlsx.full.min.js"></script>
+  <script src="js/export.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

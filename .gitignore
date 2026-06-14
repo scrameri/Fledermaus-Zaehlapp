@@ -1,0 +1,6 @@
+# macOS / exFAT
+.DS_Store
+._*
+
+# lokale Tooling-/Preview-Konfiguration
+.claude/
