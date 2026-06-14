@@ -14,10 +14,10 @@ function svgEl(tag, attrs) {
 }
 
 // Kumulative Netto-Ausflugkurve. series = [{t, saldo}], startMs.
-function renderCumulative(container, series, startMs) {
+function renderCumulative(container, series, startMs, height) {
   container.innerHTML = "";
   const W = container.clientWidth || 320;
-  const H = 220;
+  const H = height || 220;
   const padL = 38, padR = 12, padT = 14, padB = 30;
   const svg = svgEl("svg", { viewBox: `0 0 ${W} ${H}`, width: "100%", height: H, role: "img" });
 
@@ -76,10 +76,10 @@ function renderCumulative(container, series, startMs) {
 }
 
 // Ausfluege je Minute. bins = [{minute, anzahl}]
-function renderHistogram(container, bins) {
+function renderHistogram(container, bins, height) {
   container.innerHTML = "";
   const W = container.clientWidth || 320;
-  const H = 200;
+  const H = height || 200;
   const padL = 38, padR = 12, padT = 14, padB = 30;
   const svg = svgEl("svg", { viewBox: `0 0 ${W} ${H}`, width: "100%", height: H, role: "img" });
 

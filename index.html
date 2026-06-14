@@ -16,7 +16,7 @@
   <!-- Startansicht -->
   <section id="view-start" class="view active">
     <header class="app-header">
-      <div class="brand"><span class="bat">&#128012;</span> Fledermaus-Zaehlung</div>
+      <div class="brand"><span class="bat">&#129415;</span> Fledermaus-Zaehlung</div>
       <button id="btn-settings" class="icon-btn" title="Einstellungen">&#9881;</button>
     </header>
     <main class="content">
@@ -80,6 +80,17 @@
         <div id="est-titel" class="est-titel">-</div>
         <div id="est-detail" class="est-detail muted">-</div>
         <div id="est-variante" class="est-variante muted small">-</div>
+      </div>
+
+      <div id="live-charts" class="live-charts" style="display:none">
+        <div class="card mini">
+          <div class="card-title">Kumulative Ausflugkurve</div>
+          <div id="live-chart-cum" class="chart"></div>
+        </div>
+        <div class="card mini">
+          <div class="card-title">Ausfluege je Minute</div>
+          <div id="live-chart-hist" class="chart"></div>
+        </div>
       </div>
 
       <div class="count-buttons">

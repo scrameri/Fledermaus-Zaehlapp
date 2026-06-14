@@ -5,6 +5,9 @@ let settings = loadSettings();
 let current = null;       // aktuell laufende/angezeigte Session
 let tickTimer = null;     // 1-Sekunden-Takt im Zaehl-Screen
 
+// Ab so vielen gueltigen Ausfluegen werden die Live-Charts beim Zaehlen gezeigt.
+const LIVE_CHART_MIN = 3;
+
 // --- Hilfen ---------------------------------------------------------------
 const qs = (sel) => document.querySelector(sel);
 const qsa = (sel) => Array.from(document.querySelectorAll(sel));
@@ -181,6 +184,18 @@ function updateCountUI() {
   qs("#est-titel").textContent = est.titel;
   qs("#est-detail").textContent = est.detail;
   qs("#est-variante").textContent = "Variante: " + ESTIMATOR_LABEL[settings.estimator];
+
+  renderLiveCharts();
+}
+
+// Live-Charts waehrend des Zaehlens. Erst ab LIVE_CHART_MIN Ausfluegen sichtbar.
+function renderLiveCharts() {
+  const box = qs("#live-charts");
+  const nOut = validEvents(current.events).filter((e) => e.typ === "out").length;
+  if (nOut < LIVE_CHART_MIN) { box.style.display = "none"; return; }
+  box.style.display = "flex";
+  renderCumulative(qs("#live-chart-cum"), netSeries(current.events), current.startMs, 130);
+  renderHistogram(qs("#live-chart-hist"), exitsPerMinute(current.events, current.startMs, Date.now()), 120);
 }
 
 function finishCounting() {
@@ -305,7 +320,9 @@ function wire() {
   qs("#btn-set-back").onclick = () => { settings = loadSettings(); applyTheme(); show("view-start"); };
 
   window.addEventListener("resize", () => {
-    if (qs("#view-result").classList.contains("active") && current) renderResultCharts();
+    if (!current) return;
+    if (qs("#view-result").classList.contains("active")) renderResultCharts();
+    else if (qs("#view-count").classList.contains("active")) renderLiveCharts();
   });
 }
 
